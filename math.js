@@ -17,9 +17,22 @@ function physics (...items) {
   });
 }
 
+function normalize (value) {
+  if (value > 0) return 1
+  if (value < 0) return -1;
+  return 0;
+}
+
 function keepInBounds(item) {
   item.x = clamp(1, item.x, bounds.x - 2)
   item.y = clamp(1, item.y, bounds.y - 3)
+  return item
+}
+
+// this needs to work regardless of if v1 and v2 are in any particular order
+function between (v1, target, v2) {
+  const sorted = [v1, target, v2].sort()
+  return sorted[1] === target
 }
 
 module.exports = {
@@ -27,4 +40,6 @@ module.exports = {
   div,
   physics,
   keepInBounds,
+  normalize,
+  between,
 }

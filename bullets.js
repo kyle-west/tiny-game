@@ -38,8 +38,13 @@ function removeDeadBullets() {
   })
 }
 
+function clearAll () {
+  bullets.forEach(bullet => bullet.dead = true)
+}
+
 module.exports = {
   bullets,
   fire,
   removeDeadBullets,
+  clearAll,
 }
