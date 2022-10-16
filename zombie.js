@@ -4,17 +4,29 @@ const zombies = []
 const speed = 1;
 const stats = { kills: 0, count: 0 };
 
-const draw = "Z"
+const draw = "🧟"
+
+function taken(x, y) {
+  return Boolean(zombies.find(z => (z.x === x && z.y === y)))
+}
 
 function track(target) {
   const { x, y } = target
   zombies.forEach((zombie) => {
-    const step = Math.random() > 0.5 ? 'x' : 'y'
-    if (step === 'x' && zombie.x !== x) {
-      zombie.x = zombie.x + normalize(x - zombie.x) * speed
-    }
+    let step = Math.random() > 0.5 ? 'x' : 'y'
     if (step === 'y' && zombie.y !== y) {
-      zombie.y = zombie.y + normalize(y - zombie.y)
+      const newY = zombie.y + normalize(y - zombie.y)
+      if (!taken(x, newY)) {
+        zombie.y = newY
+      } else {
+        step = 'x'
+      }
+    }
+    if (step === 'x' && zombie.x !== x) {
+      const newX = zombie.x + normalize(x - zombie.x) * speed
+      if (!taken(newX, y)) {
+        zombie.x = newX
+      }
     }
     if (zombie.x === x && zombie.y === y) {
       target.dead = true

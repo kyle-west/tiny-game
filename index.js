@@ -1,17 +1,20 @@
 const { paint, bounds, apply } = require('./print');
-const { div, physics, keepInBounds, clamp } = require('./math');
+const { div, physics, keepInBounds } = require('./math');
 const { addListener } = require('./keyboard');
 
 const { fire, bullets, removeDeadBullets, clearAll: clearAllBullets } = require('./bullets');
 const { addZombie, track, zombies, removeDeadZombies, killZombies, zombieStats, clearAll: clearAllZombies } = require('./zombie');
+const { knife, throwKnife } = require('./knife');
 
 const board = `╔${"═".repeat(bounds.x-2)}╗\n${`║${" ".repeat(bounds.x-2)}║\n`.repeat(bounds.y-3)}╚${"═".repeat(bounds.x-2)}╝`
 let inGameMessage = 'WELCOME! Press the spacebar to begin.'
 const player = {
   x: div(bounds.x, 2),
   y: div(bounds.y, 2),
-  draw: `■`,
-  facing: 'right'
+  draw: '👮', // `■`,
+  facing: 'right',
+  hasKnife: false,
+  hasGun: false,
 }
 
 addListener((key) => {
@@ -59,7 +62,11 @@ addListener((key) => {
       break;
     }
     case ' ': {
-      fire(player)
+      if (player.hasGun) {
+        fire(player)
+      } else if (player.hasKnife) {
+        throwKnife(player)
+      }
       break;
     }
   }
@@ -88,11 +95,13 @@ function gameLoop () {
   if (player.dead) {
     const stats = { x: 2, y: 0, draw: ` Zombies: ${zombieStats.count} | Kills: ${zombieStats.kills} `}
     const message = { x: div(bounds.x, 2) - 5, y: div(bounds.y, 2) - 1, draw: `GAME OVER`}
-    paint(apply(board, {...player, draw: '%Z' }, message, stats))
+    paint(apply(board, {...player, draw: '🧠🧟' }, message, stats))
     return
   }
 
   physics(...bullets)
+  physics(knife)
+  keepInBounds(knife)
   
   killZombies(bullets)
   removeDeadBullets()
@@ -105,7 +114,7 @@ function gameLoop () {
   }
 
   const stats = { x: 2, y: 0, draw: ` Zombies: ${zombieStats.count} | Kills: ${zombieStats.kills} `}
-  paint(apply(board, player, ...bullets, ...zombies, stats))
+  paint(apply(board, player, ...bullets, ...zombies, player.hasKnife ? null : knife, stats))
 }
 
 gameLoop()
