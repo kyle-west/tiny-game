@@ -38,15 +38,43 @@ function throwKnife(player) {
   }
 }
 
-function pickupKnife(player) {
+function holdKnife(player) {
   const inMotion = (knife.dy || knife.dx)
   if (!inMotion && player.y === knife.y && between(knife.x - 1, player.x, knife.x + 1)) {
     player.hasKnife = true
+  }
+  if (player.hasKnife) {
+    knife.x = player.x + (knife.xOffset || 0)
+    knife.y = player.y + (knife.yOffset || 0)
+  }
+}
+
+function stabFrom(player) {
+  knife.xOffset = 0
+  knife.yOffset = 0
+  switch(player.facing) {
+    case 'up': {
+      knife.yOffset = -1
+      break;
+    }
+    case 'down': {
+      knife.yOffset = 1
+      break;
+    }
+    case 'left': {
+      knife.xOffset = -3
+      break;
+    }
+    case 'right': {
+      knife.xOffset = 2
+      break;
+    }
   }
 }
 
 module.exports = {
   knife,
   throwKnife,
-  pickupKnife,
+  holdKnife,
+  stabFrom,
 }

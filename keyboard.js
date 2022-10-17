@@ -6,6 +6,9 @@ const friendlyNames = {
   "\u001b[B": "ArrowDown",
   "\u001b[D": "ArrowLeft",
   "\u001b[C": "ArrowRight",
+  "\r": "Enter",
+  "\n": "Enter",
+  "\r\n": "Enter",
 }
 
 const listeners = []
@@ -13,7 +16,8 @@ const listeners = []
 process.stdin.setRawMode(true);
 process.stdin.on("data", (chunk) => {
   const char = chunk.toString()
-  if (char === ESC || char === CTRL_C) {
+  // console.log(JSON.stringify(char))
+  if (char === ESC || char === CTRL_C || char === 'q') {
     process.exit(0);
   }
   const name = friendlyNames[char] || char

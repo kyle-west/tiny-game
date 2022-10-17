@@ -47,10 +47,11 @@ function addZombie({ x, y }) {
   zombies.push({ x, y, draw })
 }
 
-function killZombies(bullets, knife) {
+function killZombies(player, bullets, knife) {
+  const playerHasKnifeButIsNotUsingIt = knife.x === player.x && knife.y === player.y
   zombies.forEach((zombie) => {
     if (
-        !zombie.dead
+        !playerHasKnifeButIsNotUsingIt && !zombie.dead
         && between(knife.x - 1, zombie.x, knife.x + 1)
         && between(knife.y - 1, zombie.y, knife.y + 1)
       ) {

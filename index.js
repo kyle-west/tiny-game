@@ -4,7 +4,7 @@ const { addListener } = require('./keyboard');
 
 const { fire, bullets, removeDeadBullets, clearAll: clearAllBullets } = require('./bullets');
 const { addZombie, track, zombies, removeDeadZombies, killZombies, zombieStats, clearAll: clearAllZombies } = require('./zombie');
-const { knife, throwKnife, pickupKnife } = require('./knife');
+const { knife, throwKnife, holdKnife, stabFrom } = require('./knife');
 
 const board = `╔${"═".repeat(bounds.x-2)}╗\n${`║${" ".repeat(bounds.x-2)}║\n`.repeat(bounds.y-3)}╚${"═".repeat(bounds.x-2)}╝`
 let inGameMessage = 'WELCOME! Press the spacebar to begin.'
@@ -61,12 +61,18 @@ addListener((key) => {
       player.facing = 'right'
       break;
     }
+    case "Enter": {
+      if (player.hasKnife) {
+        throwKnife(player)
+        player.hasKnife = false;
+      }
+      break;
+    }
     case ' ': {
       if (player.hasGun) {
         fire(player)
       } else if (player.hasKnife) {
-        throwKnife(player)
-        player.hasKnife = false;
+        stabFrom(player)
       }
       break;
     }
@@ -102,10 +108,10 @@ function gameLoop () {
 
   physics(...bullets)
   
-  pickupKnife(player)
+  holdKnife(player)
   physicsWithBounds(knife)
   
-  killZombies(bullets, knife)
+  killZombies(player, bullets, knife)
   removeDeadBullets()
   removeDeadZombies()
   track(player)
@@ -121,9 +127,10 @@ function gameLoop () {
   const stats = {
     x: 2,
     y: 0,
-    draw: ` Zombies: ${zombieStats.count} | Kills: ${zombieStats.kills}${inventory ? ` | Inventory: ${inventory}` : ''}`
+    draw: ` Zombies: ${zombieStats.count} | Kills: ${zombieStats.kills}${inventory ? ` | Inventory: ${inventory}` : ''}${JSON.stringify(knife)} `
   }
-  paint(apply(board, player, ...bullets, ...zombies, player.hasKnife || knife, stats))
+  const playerHasKnifeButIsNotUsingIt = player.hasKnife && knife.x === player.x && knife.y === player.y
+  paint(apply(board, player, ...bullets, ...zombies, playerHasKnifeButIsNotUsingIt || knife, stats))
 }
 
 gameLoop()
