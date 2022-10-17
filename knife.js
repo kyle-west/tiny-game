@@ -1,14 +1,21 @@
 const { keepInBounds, between, distance } = require('./math');
 const { bounds } = require('./print');
 
+
 const speed = 2;
-const knife = keepInBounds({
-  x: Math.floor(Math.random() * bounds.x),
-  y: Math.floor(Math.random() * bounds.y),
-  draw: '🗡️',
-  dx: 0,
-  dy: 0,
-})
+const knife = {}
+
+function placeKnife() {
+  return Object.assign(knife, keepInBounds({
+    x: Math.floor(Math.random() * bounds.x),
+    y: Math.floor(Math.random() * bounds.y),
+    draw: '🗡️',
+    dx: 0,
+    dy: 0,
+    xOffset: 0,
+    yOffset: 0,
+  }))
+}
 
 function throwKnife(player) {
   const { x, y, facing } = player
@@ -44,8 +51,8 @@ function holdKnife(player) {
     player.hasKnife = true
   }
   if (player.hasKnife) {
-    knife.x = player.x + (knife.xOffset || 0)
-    knife.y = player.y + (knife.yOffset || 0)
+    knife.x = player.x + knife.xOffset
+    knife.y = player.y + knife.yOffset
   }
 }
 
@@ -77,4 +84,5 @@ module.exports = {
   throwKnife,
   holdKnife,
   stabFrom,
+  placeKnife,
 }

@@ -4,18 +4,24 @@ const { addListener } = require('./keyboard');
 
 const { fire, bullets, removeDeadBullets, clearAll: clearAllBullets } = require('./bullets');
 const { addZombie, track, zombies, removeDeadZombies, killZombies, zombieStats, clearAll: clearAllZombies } = require('./zombie');
-const { knife, throwKnife, holdKnife, stabFrom } = require('./knife');
+const { knife, throwKnife, holdKnife, stabFrom, placeKnife } = require('./knife');
 
 const board = `╔${"═".repeat(bounds.x-2)}╗\n${`║${" ".repeat(bounds.x-2)}║\n`.repeat(bounds.y-3)}╚${"═".repeat(bounds.x-2)}╝`
 let inGameMessage = 'WELCOME! Press the spacebar to begin.'
-const player = {
-  x: div(bounds.x, 2),
-  y: div(bounds.y, 2),
-  draw: '👮', // `■`,
-  facing: 'right',
-  hasKnife: false,
-  hasGun: false,
+
+const player = {}
+function resetPlayer() {
+  return Object.assign(player, {
+    x: div(bounds.x, 2),
+    y: div(bounds.y, 2),
+    draw: '👮', // `■`,
+    facing: 'right',
+    hasKnife: false,
+    hasGun: false,
+    dead: false,
+  })
 }
+resetPlayer()
 
 addListener((key) => {
   if (inGameMessage) {
@@ -27,15 +33,12 @@ addListener((key) => {
 
   if (player.dead) {
     if (key === ' ') {
-      Object.assign(player, {
-        x: div(bounds.x, 2),
-        y: div(bounds.y, 2),
-        dead: false
-      })
+      resetPlayer()
       zombieStats.kills = 0;
       lastCount = 0;
       clearAllBullets()
       clearAllZombies()
+      placeKnife()
     }
     return
   }
@@ -91,6 +94,8 @@ function makeMoreZombies() {
   }
 }
 
+placeKnife()
+
 function gameLoop () {
   if (inGameMessage) {
     paint(apply(board, {
@@ -127,7 +132,7 @@ function gameLoop () {
   const stats = {
     x: 2,
     y: 0,
-    draw: ` Zombies: ${zombieStats.count} | Kills: ${zombieStats.kills}${inventory ? ` | Inventory: ${inventory}` : ''}${JSON.stringify(knife)} `
+    draw: ` Zombies: ${zombieStats.count} | Kills: ${zombieStats.kills}${inventory ? ` | Inventory: ${inventory}` : ''} `
   }
   const playerHasKnifeButIsNotUsingIt = player.hasKnife && knife.x === player.x && knife.y === player.y
   paint(apply(board, player, ...bullets, ...zombies, playerHasKnifeButIsNotUsingIt || knife, stats))
