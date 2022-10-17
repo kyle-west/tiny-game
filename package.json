@@ -1,0 +1,24 @@
+{
+  "name": "@kyle-west/tiny-game",
+  "version": "0.1.0",
+  "description": "Play a small Zombie attack game in your terminal!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kyle-west/tiny-game.git"
+  },
+  "keywords": [
+    "game",
+    "hacktoberfest"
+  ],
+  "author": "kylewest.dev",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/kyle-west/tiny-game/issues"
+  },
+  "homepage": "https://github.com/kyle-west/tiny-game#readme"
+}

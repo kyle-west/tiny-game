@@ -24,9 +24,21 @@ function normalize (value) {
 }
 
 function keepInBounds(item) {
-  item.x = clamp(1, item.x, bounds.x - 2)
+  item.x = clamp(1, item.x, bounds.x - 3)
   item.y = clamp(1, item.y, bounds.y - 3)
   return item
+}
+
+function physicsWithBounds(...items) {
+  physics(...items)
+  items.forEach(item => {
+    const { x, y } = item
+    keepInBounds(item)
+    if (x !== item.x || y !== item.y) {
+      item.dx = 0
+      item.dy = 0
+    }
+  });
 }
 
 // this needs to work regardless of if v1 and v2 are in any particular order
@@ -35,11 +47,17 @@ function between (v1, target, v2) {
   return sorted[1] === target
 }
 
+function distance(a, b) {
+  return Math.floor(Math.sqrt( (a.x - b.x)**2 + (a.y - b.y)**2 ))
+}
+
 module.exports = {
   clamp,
   div,
-  physics,
   keepInBounds,
+  physics,
+  physicsWithBounds,
   normalize,
   between,
+  distance,
 }

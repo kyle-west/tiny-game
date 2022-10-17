@@ -4,17 +4,29 @@ const zombies = []
 const speed = 1;
 const stats = { kills: 0, count: 0 };
 
-const draw = "Z"
+const draw = "🧟"
+
+function taken(x, y) {
+  return Boolean(zombies.find(z => (z.x === x && z.y === y)))
+}
 
 function track(target) {
   const { x, y } = target
   zombies.forEach((zombie) => {
-    const step = Math.random() > 0.5 ? 'x' : 'y'
-    if (step === 'x' && zombie.x !== x) {
-      zombie.x = zombie.x + normalize(x - zombie.x) * speed
-    }
+    let step = Math.random() > 0.5 ? 'x' : 'y'
     if (step === 'y' && zombie.y !== y) {
-      zombie.y = zombie.y + normalize(y - zombie.y)
+      const newY = zombie.y + normalize(y - zombie.y)
+      if (!taken(x, newY)) {
+        zombie.y = newY
+      } else {
+        step = 'x'
+      }
+    }
+    if (step === 'x' && zombie.x !== x) {
+      const newX = zombie.x + normalize(x - zombie.x) * speed
+      if (!taken(newX, y)) {
+        zombie.x = newX
+      }
     }
     if (zombie.x === x && zombie.y === y) {
       target.dead = true
@@ -35,11 +47,21 @@ function addZombie({ x, y }) {
   zombies.push({ x, y, draw })
 }
 
-function killZombies(bullets) {
+function killZombies(player, bullets, knife) {
+  const playerHasKnifeButIsNotUsingIt = knife.x === player.x && knife.y === player.y
   zombies.forEach((zombie) => {
+    if (
+        !playerHasKnifeButIsNotUsingIt && !zombie.dead
+        && between(knife.x - 1, zombie.x, knife.x + 1)
+        && between(knife.y - 1, zombie.y, knife.y + 1)
+      ) {
+      zombie.dead = true
+      stats.kills = stats.kills + 1
+    }
+
     bullets.forEach((bullet) => {
       if (
-          !bullet.dead
+          !bullet.dead && !zombie.dead
           && between(bullet.x - (bullet.dx/2), zombie.x, bullet.x + (bullet.dx/2))
           && between(bullet.y - (bullet.dy/2), zombie.y, bullet.y + (bullet.dy/2))
         ) {

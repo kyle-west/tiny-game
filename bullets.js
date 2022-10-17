@@ -6,10 +6,13 @@ function outOfBounds(item) {
 
 const bullets = []
 const speed = 2;
+const MAX_BULLETS = 3;
 
 const draw = "·"
 
 function fire({ x, y, facing }) {
+  if (bullets.filter(({ dead }) => !dead).length >= MAX_BULLETS) return
+
   switch(facing) {
     case 'up': {
       bullets.push({ x, y, dx: 0, dy: -speed, draw })

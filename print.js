@@ -17,7 +17,7 @@ function stamp(str, index, replacement) {
 
 function apply (base, ...rest) {
   const lines = base.split('\n')
-  rest.forEach(({ x, y, draw }) => {
+  rest.filter(Boolean).forEach(({ x, y, draw }) => {
     lines[y] = stamp(lines[y], x, draw)
   })
   return lines.join('\n')
