@@ -47,11 +47,20 @@ function addZombie({ x, y }) {
   zombies.push({ x, y, draw })
 }
 
-function killZombies(bullets) {
+function killZombies(bullets, knife) {
   zombies.forEach((zombie) => {
+    if (
+        !zombie.dead
+        && between(knife.x - 1, zombie.x, knife.x + 1)
+        && between(knife.y - 1, zombie.y, knife.y + 1)
+      ) {
+      zombie.dead = true
+      stats.kills = stats.kills + 1
+    }
+
     bullets.forEach((bullet) => {
       if (
-          !bullet.dead
+          !bullet.dead && !zombie.dead
           && between(bullet.x - (bullet.dx/2), zombie.x, bullet.x + (bullet.dx/2))
           && between(bullet.y - (bullet.dy/2), zombie.y, bullet.y + (bullet.dy/2))
         ) {
