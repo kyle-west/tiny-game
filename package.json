@@ -15,6 +15,9 @@
     "game",
     "hacktoberfest"
   ],
+  "bin": {
+    "tiny-game": "index.js"
+  },
   "author": "kylewest.dev",
   "license": "UNLICENSED",
   "bugs": {

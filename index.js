@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { paint, bounds, apply } = require('./print');
 const { div, physics, physicsWithBounds, keepInBounds } = require('./math');
 const { addListener } = require('./keyboard');
